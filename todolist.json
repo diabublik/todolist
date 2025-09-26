@@ -3,25 +3,5 @@
         "priority": "1",
         "tag": "home",
         "date": "never"
-    },
-    "math": {
-        "priority": "2",
-        "tag": "homework",
-        "date": "20-09-2025"
-    },
-    "english": {
-        "priority": "3",
-        "tag": "homework",
-        "date": "23-09-2025"
-    },
-    "coding": {
-        "priority": "4",
-        "tag": "study",
-        "date": "25-09-2025"
-    },
-    "reading": {
-        "priority": "5",
-        "tag": "hobby",
-        "date": "never"
     }
 }

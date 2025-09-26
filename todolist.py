@@ -17,7 +17,7 @@ def show_list():
     try:
         with open("todolist.json", "r", encoding="utf-8") as file:
             data = json.load(file)
-    
+
         print_equal()
         for key, value in data.items():
             print(f"{value['priority']} | {key} | {value['tag']} | {value['date']}")
@@ -130,6 +130,7 @@ def delete_task():
 
 
 def mark_completed():
+    # читаем основной тудулист (если есть)
     try:
         with open("todolist.json", "r", encoding="utf-8") as file:
             data = json.load(file)
@@ -140,18 +141,43 @@ def mark_completed():
         if completed_task in data:
             del data[completed_task]["priority"]
 
-            with open("completed_tasks.json", "a+", encoding="utf-8") as comp_file: # если файл пуст, то блок if не выполнятеся
-                comp_data = json.load(comp_file)
-                comp_data[completed_task] = data[completed_task]
+            #читаем список законченных дел (если есть)
+            try:
+                with open("completed_tasks.json", "r", encoding="utf-8") as comp_file: # если файл пуст, то блок if не выполнятеся
+                    comp_data = json.load(comp_file)
+            except(json.decoder.JSONDecodeError):
+                comp_data = {}
+
+            # сохраняем нужную задачу в список законченных дел
+            comp_data[completed_task] = data[completed_task]
+            
+            #записываем эту задачу в этот список
+            with open("completed_tasks.json", "w", encoding="utf-8") as comp_file:
                 json.dump(comp_data, comp_file, indent=4)
 
+            # удаляем законченную задачу из тудулиста и переписываем его содержимое
             del data[completed_task]
             with open("todolist.json", "w", encoding="utf-8") as file:
                 json.dump(data, file, indent=4)
         else:
-            print("There isn`t such task")
+            print("There isn`t a such task")
     except (json.decoder.JSONDecodeError):
-        pass
+        print("The list is empty")
+
+
+def show_comp_tasks():
+    try:
+        with open("completed_tasks.json", "r", encoding="utf-8") as comp_file:
+            data = json.load(comp_file)
+    
+        print_equal()
+        for key, value in data.items():
+            print(f"{key} | {value['tag']} | {value['date']}")
+        print_equal()
+    except (json.decoder.JSONDecodeError):
+        print_dash()
+        print("The list is empty")
+        print_dash()
 
 
 def clear_completed_list():
@@ -163,7 +189,7 @@ def clear_completed_list():
 
 def menu():
     choice: str = '-1'
-    while choice != '6':
+    while choice != '7':
         show_list()
 
         print("1 - Add new task")
@@ -171,7 +197,8 @@ def menu():
         print("3 - Delete the task")
         print("4 - Mark completed task")
         print("5 - Clear the list of the completed tasks")
-        print("6 - Exit")
+        print("6 - Show the completed tasks")
+        print("7 - Exit")
         
         choice = input("Enter the number: ")
 
@@ -186,6 +213,8 @@ def menu():
         elif choice == '5':
             clear_completed_list()
         elif choice == '6':
+            show_comp_tasks()
+        elif choice == '7':
             print_dash()
             print("Bye")
             print_dash()
